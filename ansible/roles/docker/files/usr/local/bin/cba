@@ -1,0 +1,8 @@
+#!/bin/bash
+
+app=$1
+if [ ! -z $app ]; then
+  for i in `docker ps -aq` ; do docker inspect -f '{{ .Id }} {{ .Created }} {{ index .Config.Labels "empire.app.name" }}' $i ; done | grep $app
+else
+  for i in `docker ps -aq` ; do docker inspect -f '{{ .Id }} {{ .Created }} {{ index .Config.Labels "empire.app.name" }}' $i ; done
+fi

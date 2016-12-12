@@ -1,0 +1,42 @@
+{
+  "api.version": "v1",
+  "sources": [
+    {
+      "sourceType": "LocalFile",
+      "name": "localfile-var-log-syslog",
+      "pathExpression": "/hostlogs/syslog*",
+      "multilineProcessingEnabled": false,
+      "automaticDateParsing": true,
+      "forceTimeZone": false,
+      "category": "{{empire_environment}}/syslog"
+    },
+    {
+      "sourceType": "LocalFile",
+      "name": "localfile-var-log-authlog",
+      "pathExpression": "/hostlogs/auth.log*",
+      "multilineProcessingEnabled": false,
+      "automaticDateParsing": true,
+      "forceTimeZone": false,
+      "category": "{{empire_environment}}/authlog"
+    },
+    {
+      "sourceType": "LocalFile",
+      "name": "localfile-var-log-docker-maid-=log",
+      "pathExpression":  "/hostlogs/docker-maid.log",
+      "multilineProcessingEnabled": false,
+      "automaticDateParsing": true,
+      "forceTimeZone": false,
+      "category": "{{empire_environment}}/docker-maid"
+    },
+    {
+      "name": "Docker-logs",
+      "category": "{{empire_environment}}/docker-logs",
+      "allContainers": true,
+      "collectEvents": true,
+      "uri": "unix:///var/run/docker.sock",
+      "specifiedContainers": [],
+      "multilineProcessingEnabled": false,
+      "sourceType": "DockerLog"
+    }
+  ]
+}

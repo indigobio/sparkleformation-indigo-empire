@@ -1,0 +1,1 @@
+docker_version: "{{ lookup('env', 'DOCKER_VERSION') }}"

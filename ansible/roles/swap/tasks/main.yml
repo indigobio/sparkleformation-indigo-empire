@@ -1,0 +1,32 @@
+- stat: path=/mnt/swap
+  register: mnt_swap
+
+- stat: path=/dev/xvdi
+  register: dev_xvdi
+
+- name: Make swap on /mnt/swap
+  command: "dd if=/dev/zero of=/mnt/swap bs=1024 count={{ mem2x }}"
+  with_items: "{{ ansible_mounts }}"
+  when: item.mount == '/mnt' and {{ item.size_available / 1024 }} > {{ mem2x | int }} and not dev_xvdi.stat.exists and not mnt_swap.stat.exists
+  register: mnt_swap
+
+- name: "Make swap secure"
+  command: "chmod 0600 /mnt/swap"
+  when: mnt_swap|changed
+
+- command: mkswap /mnt/swap
+  when: mnt_swap|changed
+
+- mount: name=swap src=/mnt/swap fstype=swap state=present opts=sw passno=0 dump=0
+  when: mnt_swap|changed
+
+- name: Make swap on /dev/xvdi
+  command: mkswap /dev/xvdi
+  when: ansible_swaptotal_mb < 1 and dev_xvdi.stat.exists and not mnt_swap|changed
+
+- mount: name=swap src=/dev/xvdi fstype=swap state=present opts=sw passno=0 dump=0
+  when: ansible_swaptotal_mb < 1 and dev_xvdi.stat.exists and not mnt_swap|changed
+
+- name: Mount swap
+  command: "swapon -a"
+  ignore_errors: yes

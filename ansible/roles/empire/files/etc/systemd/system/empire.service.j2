@@ -1,0 +1,27 @@
+[Unit]
+Description=Empire
+Documentation=http://empire.readthedocs.io/en/latest/
+Requires=docker.socket
+After=ecs-agent.service
+
+[Service]
+Environment=EMPIRE_VERSION={{ empire_version }}
+Restart=on-failure
+RestartSec=30
+RestartPreventExitStatus=5
+SyslogIdentifier=empire
+ExecStartPre=-/usr/bin/docker kill empire
+ExecStartPre=-/usr/bin/docker rm empire
+ExecStartPre=/usr/bin/docker pull remind101/empire:${EMPIRE_VERSION}
+ExecStart=/usr/bin/docker run --name empire \
+ --env-file=/etc/empire/env/empire.env \
+ --volume=/var/run/docker.sock:/var/run/docker.sock \
+ --volume=/etc/empire/dockercfg:/root/.docker/config.json \
+ remind101/empire:${EMPIRE_VERSION} server --automigrate=true
+
+ExecStopPost=/usr/bin/docker stop -t 2 empire
+ExecStopPost=/usr/bin/docker rm empire
+
+[Install]
+WantedBy = multi-user.target
+

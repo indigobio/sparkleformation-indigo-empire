@@ -1,0 +1,47 @@
+{
+  "variables": {
+    "aws_account_id": "{{env `AWS_CUSTOMER_ID` }}",
+    "ami_users": "{{env `AWS_ALTERNATE_IDS` }}",
+    "ami_regions": "{{env `AWS_ALTERNATE_REGIONS` }}"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "name": "empire-us-east-1",
+      "region": "us-east-1",
+      "source_ami": "ami-e6d5d2f1",
+      "instance_type": "c4.large",
+      "ssh_username": "ubuntu",
+      "ssh_timeout": "5m",
+      "ami_name": "Empire PaaS {{user `branch` | clean_ami_name}} {{isotime | clean_ami_name}}",
+      "ami_regions": "{{ user `ami_regions` }}",
+      "ami_users": "{{ user `ami_users` }}",
+      "tags": {
+        "Purpose": "empire",
+        "changes": "{{user `changes`}}",
+        "gitinfo": "{{user `gitinfo`}}"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "scripts": [
+        "bootstrap/user-data.sh"
+      ],
+      "execute_command": "sudo -E sh '{{ .Path }}'",
+      "override": { },
+      "environment_vars": [
+        "PATH=${PATH}:/usr/local/bin:/usr/sbin:/usr/local/sbin"
+      ]
+    },
+    {
+      "type": "ansible-local",
+      "command": "cd /etc/ansible-local ; chmod +x /etc/ansible-local/hosts ; env $(cat seed) sudo -E ansible-playbook --tags build_ami",
+      "playbook_file": "ansible/local.yml",
+      "playbook_dir": "ansible",
+      "inventory_file": "ansible/hosts",
+      "staging_directory": "/etc/ansible-local"
+    }
+  ]
+}

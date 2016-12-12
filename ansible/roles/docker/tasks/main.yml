@@ -1,0 +1,125 @@
+- include_vars: docker.yml
+
+- name: create huge pages target
+  copy:
+    src: etc/systemd/system/disable_transparent_huge_pages.service
+    dest: /etc/systemd/system/disable_transparent_huge_pages.service
+    owner: root
+    group: root
+    mode: 0755
+  notify:
+    - start transparent huge pages target
+  tags:
+    - build_ami
+
+- name: enable huge pages target
+  command: 'systemctl enable disable_transparent_huge_pages.service'
+  notify:
+    - start transparent huge pages target
+  tags:
+    - build_ami
+
+# Docker is too swappy.
+- sysctl: name=vm.swappiness value=1 state=present
+  tags:
+    - build_ami
+
+- apt: name=aufs-tools
+  tags:
+    - build_ami
+
+- apt: name=lvm2
+  tags:
+    - build_ami
+
+- apt: name=linux-image-extra-{{ansible_kernel}}
+  tags:
+    - build_ami
+
+- apt: name=linux-image-extra-virtual
+  tags:
+    - build_ami
+
+- apt: name=apparmor
+  tags:
+    - build_ami
+
+- name: create /usr/sbin/make_dockercfg
+  copy:
+    src: usr/sbin/make_dockercfg
+    dest: /usr/sbin/make_dockercfg
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - build_ami
+
+- stat: path=/dev/xvdc
+  register: dev_xvdc
+  
+- stat: path=/dev/xvdh
+  register: dev_xvdh
+
+- lvg: vg=vg-docker pvs=/dev/xvdc
+  when: dev_xvdc.stat.exists and not dev_xvdh.stat.exists
+  register: docker_vg_xvdc
+
+- lvg: vg=vg-docker pvs=/dev/xvdh
+  when: dev_xvdh.stat.exists
+  register: docker_vg_xvdh
+
+- lvol: vg=vg-docker lv=docker0 size=100%FREE
+  when: docker_vg_xvdc|changed or docker_vg_xvdh|changed
+  register: docker_lvol0
+
+- filesystem: fstype=ext4 dev=/dev/mapper/vg--docker/docker0 opts='-L docker'
+  when: docker_lvol0|changed
+  register: docker_fs_lvol0
+
+- service: name=docker state=stopped
+  when: docker_fs_lvol0|changed
+
+# Make absolutely sure aufs doesn't exist or docker freaks
+# https://github.com/docker/docker/issues/14026
+
+- shell: /bin/umount -t aufs -a -f
+  ignore_errors: yes
+  when: docker_fs_lvol0|changed
+
+- shell: /bin/umount -f /var/lib/docker/aufs
+  ignore_errors: yes
+  when: docker_fs_lvol0|changed
+
+- file: path=/var/lib/docker state=absent
+  ignore_errors: yes
+  when: docker_fs_lvol0|changed
+
+- mount: name=/var/lib/docker src='LABEL=docker' fstype=ext4 state=mounted
+  when: docker_fs_lvol0|changed
+
+- name: Install docker-engine
+  apt:
+    name: "docker-engine={{ docker_version }}~{{ ansible_distribution_release }}"
+  tags:
+    - build_ami
+
+- copy: src=etc/default/docker dest=/etc/default/docker owner=root group=root mode=0644
+  notify:
+    - restart_docker
+
+- copy: src=usr/local/bin/cba dest=/usr/local/bin/cba owner=root mode=0755
+
+- copy: src=usr/sbin/docker_maid dest=/usr/sbin/docker_maid owner=root group=root mode=0755
+  tags: 
+    - build_ami
+
+- cron: name=docker_maid cron_file=docker_maid user=root minute="15" hour="2,3,4,5,8,11,14,17,20,23" job="/usr/sbin/docker_maid"
+  tags: 
+    - build_ami
+
+- name: Adding ubuntu to docker group
+  user: name=ubuntu groups=docker append=yes
+  tags: 
+    - build_ami
+
+- service: name=docker state=started

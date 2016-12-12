@@ -1,0 +1,11 @@
+---
+new_relic_loglevel: info
+new_relic_logfile: /var/log/newrelic/nrsysmond.log
+new_relic_proxy: False
+new_relic_ssl: "true"
+new_relic_ssl_ca_bundle: False
+new_relic_ssl_ca_path: False
+new_relic_pidfile: /var/run/newrelic/nrsysmond.pid
+new_relic_collector_host: collector.newrelic.com
+new_relic_timeout: 30
+new_relic_server_labels: Environment:prod;Role:empire

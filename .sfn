@@ -1,0 +1,53 @@
+# This is an auto-generated configuration file for
+# the sfn CLI. To view all available configuration
+# options, please see:
+# http://www.sparkleformation.io/docs/sfn/configuration.html
+Configuration.new do
+  #   Load SparklePacks
+  sparkle_pack [
+    'sparkle-pack-aws-availability-zones',
+    'sparkle-pack-aws-instance-types',
+    'sparkle-pack-aws-ebs-volumes',
+    'sparkle-pack-aws-my-load-balancers',
+    'sparkle-pack-aws-my-s3-buckets',
+    'sparkle-pack-aws-my-security-groups',
+    'sparkle-pack-aws-my-server-certificates',
+    'sparkle-pack-aws-my-sns-topics',
+    'sparkle-pack-aws-my-subnets',
+    'sparkle-pack-aws-my-route53-zones',
+    'sparkle-pack-cfn-init-ansible'
+  ]
+  #   Set style of stack nesting
+  apply_nesting 'deep'
+  #   Enable processing of SparkleFormation templates
+  processing true
+  #   Provider specific options used when creating
+  #   new stacks. Options defined here are AWS specific.
+  options do
+    capabilities ['CAPABILITY_IAM']
+    disable_rollback true
+    max_poll_retries 60
+    notification_topics []
+    on_failure 'nothing'
+    tags do
+      Environment ENV['environment']
+    end
+  end
+  #   Name of bucket in object store to hold nested
+  #   stack templates
+  # nesting_bucket 'BUCKET_NAME'
+  #   Prefix used on generated template path prior to storage
+  #   in the object store
+  # nesting_prefix 'nested-templates'
+  #   Remote provider credentials
+  credentials do
+    #  Remote provider name (:aws, :azure, :google, :open_stack, :rackspace)
+    provider :aws
+    #  AWS credentials information
+    aws_access_key_id ENV['AWS_ACCESS_KEY_ID']
+    aws_secret_access_key ENV['AWS_SECRET_ACCESS_KEY']
+    aws_region ENV['AWS_REGION']
+    aws_bucket_region ENV['AWS_REGION']
+    # aws_sts_role_arn ENV['AWS_STS_ROLE_ARN']
+  end
+end

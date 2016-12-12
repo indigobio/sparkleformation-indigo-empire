@@ -1,0 +1,32 @@
+[Unit]
+Description=SumoLogic Collector
+Documentation=http://help.sumologic.com/
+Requires=syslog.socket
+After=network.target
+
+[Service]
+Environment=SUMOLOGIC_VERSION={{ sumologic_version }}
+Restart=on-failure
+RestartSec=30
+RestartPreventExitStatus=5
+SyslogIdentifier=sumologic-collector
+ExecStartPre=-/usr/bin/docker kill sumologic-collector
+ExecStartPre=-/usr/bin/docker rm sumologic-collector
+ExecStartPre=/usr/bin/docker pull sumologic/collector:{{ sumologic_version }}
+ExecStart=/usr/bin/docker run --name sumologic-collector \
+ --env-file=/etc/sumo/sumologic.conf \
+ --volume=/var/lib/docker:/logs:ro \
+ --volume=/var/log:/hostlogs:ro \
+ --volume=/var/run/docker.sock:/var/run/docker.sock \
+ --volume=/etc/sumo/sumo-sources.json.j2:/etc/sumo-sources.json.j2:ro \
+ --restart=always \
+ --cap-add=SYS_PTRACE \
+ --security-opt=apparmor:unconfined \
+ sumologic/collector:${SUMOLOGIC_VERSION}
+
+ExecStopPost=/usr/bin/docker stop -t 2 sumologic-collector
+ExecStopPost=/usr/bin/docker rm sumologic-collector
+
+[Install]
+WantedBy = multi-user.target
+
