@@ -25,6 +25,14 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
     description 'Associate public IP addresses to instances'
   end
 
+  parameters("#{_name}_ansible_inventory".to_sym) do
+    type 'String'
+    default _config.fetch(:ansible_inventory, '/etc/ansible/hosts')
+    allowed_pattern "[\\x20-\\x7E]*"
+    description 'Git repository containing ansible playbook'
+    constraint_description 'can only contain ASCII characters'
+  end
+
   parameters("#{_name}_ansible_playbook_repo".to_sym) do
     type 'String'
     default _config[:ansible_playbook_repo]
@@ -130,6 +138,7 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
 
   dynamic!(:auto_scaling_launch_configuration, _name).registry!(:ansible_pull, _name,
            :ansible_seed => _config.fetch(:ansible_seed, {}),
+           :ansible_inventory => ref!("#{_name}_ansible_inventory".to_sym),
            :ansible_version => ref!(:ansible_version),
            :ansible_playbook_repo => ref!("#{_name}_ansible_playbook_repo".to_sym),
            :ansible_local_yaml_path => ref!("#{_name}_ansible_local_yaml_path".to_sym),

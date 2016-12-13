@@ -2,7 +2,7 @@ ENV['lb_name']            ||= "#{ENV['org']}-#{ENV['environment']}-empire-elb"
 ENV['notification_topic'] ||= "#{ENV['org']}-#{ENV['environment']}-deregister-ecs-instance"
 ENV['enable_sumologic']   ||= 'true'
 
-SparkleFormation.new(:vpn, :provider => :aws).load(:base, :ansible_base, :ssh_key_pair, :xenial_ami, :elb_security_policies).overrides do
+SparkleFormation.new(:vpn, :provider => :aws).load(:base, :ansible_base, :ssh_key_pair, :empire_ami, :elb_security_policies).overrides do
   description <<"EOF"
 Empire ECS cluster members, configured by Ansible. Empire controller ELB. Controller security
 group. Empire minion security group. Route53 record: empire.#{ENV['public_domain']}.
@@ -12,6 +12,14 @@ EOF
     type 'String'
     default registry!(:my_vpc)
     allowed_values array!(registry!(:my_vpc))
+  end
+
+  parameters(:ecs_agent_version) do
+    type 'String'
+    default 'v1.13.1'
+    allowed_pattern "[\\x20-\\x7E]*"
+    description 'Docker tag to specify the version of Empire to run'
+    constraint_description 'can only contain ASCII characters'
   end
 
   parameters(:empire_version) do
@@ -77,6 +85,14 @@ EOF
     constraint_description 'can only contain ASCII characters'
   end
 
+  parameters(:docker_version) do
+    type 'String'
+    default '1.12.3-0'
+    description 'Version of docker to install'
+    allowed_pattern "[0-9.-]+"
+    constraint_description 'can only contain numbers, periods and dashes'
+  end
+
   parameters(:github_client_id) do
     type 'String'
     default ''
@@ -137,14 +153,6 @@ EOF
     default ENV['sumologic_access_key']
     allowed_pattern "[\\x20-\\x7E]*"
     description 'SumoLogic access key for log collection'
-    constraint_description 'can only contain ASCII characters'
-  end
-
-  parameters(:sumologic_collector_name) do
-    type 'String'
-    default ENV['sumologic_collector_name']
-    allowed_pattern "[\\x20-\\x7E]*"
-    description 'SumoLogic Collector Name used as the sourceCategory'
     constraint_description 'can only contain ASCII characters'
   end
 
