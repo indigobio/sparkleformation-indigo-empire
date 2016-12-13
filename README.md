@@ -56,3 +56,9 @@ Contains a sparkleformation template and an ansible playbook that, together, cre
 | SumologicCollectorName | none | The instance's fully qualified hostname if left blank |
 | Vpc | automatically determined | cannot change |
 
+### Troubleshooting
+
+Loose notes.
+
+/var/lib/cfn-init/data/metadata.json = whatever comes over the wire from cfn-init.
+/var/lib/cloud/instance/user-data = minimal, these days.  mostly kicks off commands in /var/lib/cfn-init/data/metadata.json
