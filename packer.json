@@ -37,11 +37,10 @@
     },
     {
       "type": "ansible-local",
-      "command": "cd /etc/ansible-local ; chmod +x /etc/ansible-local/hosts ; env $(cat seed) sudo -E ansible-playbook --tags build_ami",
+      "command": "chmod +x /tmp/packer-provisioner-ansible-local/hosts ; env $(cat seed) sudo -E ansible-playbook --tags build_ami",
       "playbook_file": "ansible/local.yml",
       "playbook_dir": "ansible",
-      "inventory_file": "ansible/hosts",
-      "staging_directory": "/etc/ansible-local"
+      "inventory_file": "ansible/hosts"
     }
   ]
 }

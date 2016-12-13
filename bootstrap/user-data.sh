@@ -22,5 +22,3 @@ rm -rf /tmp/awscli-bundle*
 sudo -H apt-add-repository -y ppa:ansible/ansible
 sudo -H apt-get -qq update
 sudo -H apt-get -qq install ansible=${ANSIBLE_VERSION}~`lsb_release -s -c`
-
-sudo -H mkdir -m 0777 -p /etc/ansible-local
