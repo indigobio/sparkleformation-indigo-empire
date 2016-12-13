@@ -253,7 +253,7 @@ EOF
   # Load balancer
   dynamic!(:elb, 'controller',
            :listeners => [
-             { :instance_port => '443', :instance_protocol => 'tcp', :load_balancer_port => '443', :protocol => 'ssl', :ssl_certificate_id => registry!(:my_acm_server_certificate), :policy_names => [ref!(:elb_security_policy)] }
+             { :instance_port => '8080', :instance_protocol => 'http', :load_balancer_port => '443', :protocol => 'https', :ssl_certificate_id => registry!(:my_acm_server_certificate), :policy_names => [ref!(:elb_security_policy)] }
            ],
            :policies => [],
            :security_groups => _array( attr!(:controller_ec2_security_group, 'GroupId') ),
