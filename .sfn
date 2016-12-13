@@ -26,7 +26,6 @@ Configuration.new do
   options do
     capabilities ['CAPABILITY_IAM']
     disable_rollback true
-    max_poll_retries 60
     notification_topics []
     on_failure 'nothing'
     tags do
