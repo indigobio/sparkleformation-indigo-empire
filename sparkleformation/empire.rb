@@ -272,7 +272,9 @@ EOF
            :iam_role => 'ControllerIAMRole',
            :public_ips => 'false',
            :security_groups => _array(ref!(:controller_ec2_security_group)),
-           :ansible_seed => registry!(:controller_seed)
+           :ansible_seed => registry!(:controller_seed),
+           :create_swap_volume => false,
+           :create_ebs_volume => true
           )
 
   dynamic!(:auto_scaling_group, 'controller',
@@ -347,7 +349,9 @@ EOF
            :iam_role => 'MinionIAMRole',
            :public_ips => 'false',
            :security_groups => _array(ref!(:minion_ec2_security_group)),
-           :ansible_seed => registry!(:minion_seed)
+           :ansible_seed => registry!(:minion_seed),
+           :create_swap_volume => true,
+           :create_ebs_volume => true
           )
 
   dynamic!(:auto_scaling_group, 'minion',

@@ -7,7 +7,6 @@ Configuration.new do
   sparkle_pack [
     'sparkle-pack-aws-availability-zones',
     'sparkle-pack-aws-instance-types',
-    'sparkle-pack-aws-ebs-volumes',
     'sparkle-pack-aws-my-load-balancers',
     'sparkle-pack-aws-my-s3-buckets',
     'sparkle-pack-aws-my-security-groups',

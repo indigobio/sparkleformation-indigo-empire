@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 
 gem 'sfn'
 gem 'sparkle-pack-aws-availability-zones'
-gem 'sparkle-pack-aws-ebs-volumes',            :git => 'https://github.com/gswallow/sparkle-pack-aws-ebs-volumes.git'
 gem 'sparkle-pack-aws-instance-types',         :git => 'https://github.com/gswallow/sparkle-pack-aws-instance-types.git'
 gem 'sparkle-pack-aws-my-load-balancers',      :git => 'https://github.com/gswallow/sparkle-pack-aws-my-load-balancers'
 gem 'sparkle-pack-aws-my-s3-buckets',          :git => 'https://github.com/gswallow/sparkle-pack-aws-my-s3-buckets.git'

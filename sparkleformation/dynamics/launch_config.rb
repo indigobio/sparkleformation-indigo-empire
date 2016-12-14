@@ -67,8 +67,8 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
 
   # _config[:volume_count] has to be set to non-zero while compiling the template.
   # The number of block device mappings are coded into the json file.
-  if _config.fetch(:volume_count, 0).to_i > 0
 
+  if _config.fetch(:create_ebs_volume, false).to_s == 'true'
     conditions.set!(
       "#{_name}_volumes_are_io1".to_sym,
       equals!(ref!("#{_name}_ebs_volume_type".to_sym), 'io1')
@@ -95,17 +95,20 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
       default _config.fetch(:volume_size, '100')
     end
 
-    parameters("#{_name}_delete_ebs_volume_on_termination".to_sym) do
-      type 'String'
-      allowed_values ['true', 'false']
-      default _config.fetch(:delete_on_termination, 'true')
-    end
-
     parameters("#{_name}_ebs_optimized".to_sym) do
       type 'String'
       allowed_values _array('true', 'false')
       default _config.fetch(:ebs_optimized, 'false')
       description 'Create an EBS-optimized instance (instance type restrictions and additional charges apply)'
+    end
+  end
+
+  if _config.fetch(:create_swap_volume, false).to_s == 'true'
+    parameters("#{_name}_swap_volume_size".to_sym) do
+      type 'Number'
+      min_value '1'
+      max_value '32'
+      default _config.fetch(:swap_volume_size, '16')
     end
   end
 
@@ -119,12 +122,13 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
     security_groups _config[:security_groups]
     block_device_mappings registry!(:ebs_volumes,
                                     :io1_condition => "#{_name.capitalize}VolumesAreIo1",
-                                    :restore_condition => 'RestoreFromSnapshots',
-                                    :volume_count => _config[:volume_count],
-                                    :volume_size => ref!("#{_name}_ebs_volume_size".to_sym),
                                     :provisioned_iops => ref!("#{_name}_ebs_provisioned_iops".to_sym),
-                                    :delete_on_termination => ref!("#{_name}_delete_ebs_volume_on_termination".to_sym),
-                                    :root_volume_size => ref!("#{_name}_root_volume_size".to_sym)
+                                    :create_swap_volume => _config.fetch(:create_swap_volume, false),
+                                    :create_ebs_volume => _config.fetch(:create_ebs_volume, false),
+                                    :root_volume_size => ref!("#{_name}_root_volume_size".to_sym),
+                                    :swap_volume_size => ref!("#{_name}_swap_volume_size".to_sym),
+                                    :volume_size => ref!("#{_name}_ebs_volume_size".to_sym),
+
                           )
     if _config.fetch(:volume_count, 0).to_i > 0
       ebs_optimized ref!("#{_name}_ebs_optimized".to_sym)
