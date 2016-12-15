@@ -170,6 +170,7 @@ EOF
   # Empire would create an "allow-all" rule in the public security group
   dynamic!(:vpc_security_group, 'empire_public', :ingress_rules => [])
 
+  # Minions
   dynamic!(:security_group_ingress, 'nginx-to-empire-http',
            :source_sg => registry!(:my_security_group_id, 'nginx_sg'),
            :ip_protocol => 'tcp',
@@ -234,13 +235,22 @@ EOF
            :target_sg => attr!(:minion_ec2_security_group, 'GroupId')
           )
 
+  # Controllers
+  dynamic!(:security_group_ingress, 'controller-to-empireDB-all',
+           :source_sg => attr!(:controller_ec2_security_group, 'GroupId'),
+           :ip_protocol => 'tcp',
+           :from_port => '5432',
+           :to_port => '5432',
+           :target_sg => registry!(:my_security_group_id, 'empireDB_sg')
+          )
+
   dynamic!(:security_group_ingress, 'controller-to-nat-all',
            :source_sg => attr!(:controller_ec2_security_group, 'GroupId'),
            :ip_protocol => '-1',
            :from_port => '-1',
            :to_port => '-1',
            :target_sg => registry!(:my_security_group_id, 'nat_sg')
-  )
+          )
 
   dynamic!(:security_group_ingress, 'vpn-to-controller-all',
            :source_sg => registry!(:my_security_group_id,  'vpn_sg'),
