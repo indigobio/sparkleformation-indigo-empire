@@ -156,7 +156,9 @@ EOF
     constraint_description 'can only contain ASCII characters'
   end
 
-  # Security groups and rules
+  ######################################################################
+  # Security groups and rules                                          #
+  ######################################################################
   dynamic!(:vpc_security_group, 'controller',
            :ingress_rules =>
              [
@@ -179,7 +181,7 @@ EOF
            :target_sg => attr!(:minion_ec2_security_group, 'GroupId')
           )
 
-  dynamic!(:security_group_ingress, 'empire-to-private-mzconvert',
+  dynamic!(:security_group_ingress, 'empire-to-private-mzconvert-http',
            :source_sg => attr!(:minion_ec2_security_group, 'GroupId'),
            :ip_protocol => 'tcp',
            :from_port => '80',
@@ -201,7 +203,7 @@ EOF
            :from_port => '5432',
            :to_port => '5432',
            :target_sg => registry!(:my_security_group_id, 'private_sg')
-  )
+          )
 
   dynamic!(:security_group_ingress, 'empire-to-private-rabbitmq',
            :source_sg => attr!(:minion_ec2_security_group, 'GroupId'),
@@ -209,7 +211,7 @@ EOF
            :from_port => '5672',
            :to_port => '5672',
            :target_sg => registry!(:my_security_group_id, 'private_sg')
-  )
+          )
 
   dynamic!(:security_group_ingress, 'empire-to-private-couchbase',
            :source_sg => attr!(:minion_ec2_security_group, 'GroupId'),
@@ -217,7 +219,17 @@ EOF
            :from_port => '11311',
            :to_port => '11311',
            :target_sg => registry!(:my_security_group_id, 'private_sg')
-  )
+          )
+
+  # TODO: this seems like overkill.  Maybe I can just put the Chronicle
+  # RDS instance into the private security group.
+  dynamic!(:security_group_ingress, 'empire-to-chronicle-postgres',
+           :source_sg => attr!(:minion_ec2_security_group, 'GroupId'),
+           :ip_protocol => 'tcp',
+           :from_port => '5432',
+           :to_port => '5432',
+           :target_sg => registry!(:my_security_group_id, 'chronicle_sg')
+          )
 
   dynamic!(:security_group_ingress, 'empire-to-nat-all',
            :source_sg => attr!(:minion_ec2_security_group, 'GroupId'),
@@ -260,7 +272,9 @@ EOF
            :target_sg => attr!(:controller_ec2_security_group, 'GroupId')
           )
 
-  # Load balancer
+  ######################################################################
+  # ACTUAL STUFF: Controllers and their accoutrements                  #
+  ######################################################################
   dynamic!(:elb, 'controller',
            :listeners => [
              { :instance_port => '8080', :instance_protocol => 'http', :load_balancer_port => '443', :protocol => 'https', :ssl_certificate_id => registry!(:my_acm_server_certificate), :policy_names => [ref!(:elb_security_policy)] }
@@ -271,9 +285,8 @@ EOF
            :subnets => registry!(:my_public_subnet_ids),
            :lb_name => ENV['lb_name'],
            :ssl_certificate_ids => registry!(:my_acm_server_certificate)
-  )
+          )
 
-  # Empire Controllers
   dynamic!(:iam_instance_profile, 'controller', :policy_statements => [ :controller_policy_statements ])
 
 
@@ -308,7 +321,8 @@ EOF
            :service_role => 'ControllerIAMRole',
            :service_policy => 'ControllerIAMPolicy',
            :task_definition => 'ControllerEcsTaskDefinition',
-           :auto_scaling_group => 'ControllerAutoScalingAutoScalingGroup')
+           :auto_scaling_group => 'ControllerAutoScalingAutoScalingGroup'
+          )
 
   # Some notes are in order, here.  EMPIRE_GITHUB_CLIENT_ID and EMPIRE_GITHUB_CLIENT_SECRET need to be
   # OAuth keys that you can use to log into EMPIRE_GITHUB_ORGANIZATION as an OAuth App.
@@ -349,9 +363,21 @@ EOF
            :volumes => [
              { :name => 'dockerSocket', :source_path => '/var/run/docker.sock' },
              { :name => 'dockerCfg', :source_path => '/etc/empire/dockercfg' }
-           ])
+           ]
+         )
 
-  # Empire Minions
+  dynamic!(:record_set, 'controller',
+           :record => 'empire',
+           :target => :controller_elastic_load_balancing_load_balancer,
+           :domain_name => ENV['public_domain'],
+           :attr => 'CanonicalHostedZoneName',
+           :ttl => '60'
+          )
+
+  ######################################################################
+  # Empire Minions                                                     #
+  ######################################################################
+
   dynamic!(:iam_instance_profile, 'minion', :policy_statements => [ :minion_policy_statements ])
 
   dynamic!(:launch_config, 'minion',
@@ -372,12 +398,4 @@ EOF
           )
 
   dynamic!(:ecs_cluster, 'minion')
-
-  dynamic!(:record_set, 'controller',
-           :record => 'empire',
-           :target => :controller_elastic_load_balancing_load_balancer,
-           :domain_name => ENV['public_domain'],
-           :attr => 'CanonicalHostedZoneName',
-           :ttl => '60')
-
 end

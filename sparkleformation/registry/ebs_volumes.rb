@@ -23,7 +23,7 @@ SfnRegistry.register(:ebs_volumes) do |options = {}|
       -> {
         device_name '/dev/sdi'
         ebs do
-          delete_on_termination true
+          delete_on_termination 'true'
           volume_type if!(options[:io1_condition], 'io1', 'gp2')
           iops if!(options[:io1_condition], provisioned_iops, no_value!)
           volume_size swap_volume_size
@@ -37,7 +37,7 @@ SfnRegistry.register(:ebs_volumes) do |options = {}|
       -> {
         device_name '/dev/sdh'
         ebs do
-          delete_on_termination true
+          delete_on_termination 'true'
           volume_type if!(options[:io1_condition], 'io1', 'gp2')
           iops if!(options[:io1_condition], provisioned_iops, no_value!)
           volume_size volume_size
@@ -45,6 +45,6 @@ SfnRegistry.register(:ebs_volumes) do |options = {}|
       }
     )
   end
-  
-  bdm
+
+  _array( *bdm )
 end
