@@ -4,6 +4,16 @@
 - name: Manage /etc/hosts
   template: src=etc/hosts dest=/etc/hosts owner=root group=root mode=0644
 
+- name: Disable auto updates and upgrades service
+  systemd: name=apt-daily.service state=stopped enabled=false
+  tags:
+    - build_ami
+
+- name: Disable auto updates and upgrades timer
+  systemd: name=apt-daily.timer state=stopped enabled=false
+  tags:
+    - build_ami
+
 - apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-{{ansible_distribution_release}} main' state=present
   tags:
     - build_ami

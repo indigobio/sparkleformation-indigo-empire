@@ -72,7 +72,7 @@
   when: docker_vg_xvdc|changed or docker_vg_xvdh|changed
   register: docker_lvol0
 
-- filesystem: fstype=ext4 dev=/dev/mapper/vg--docker/docker0 opts='-L docker'
+- filesystem: fstype=ext4 dev=/dev/mapper/vg--docker-docker0 opts='-L docker'
   when: docker_lvol0|changed
   register: docker_fs_lvol0
 
