@@ -103,6 +103,14 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
     end
   end
 
+  parameters("#{_name}_new_relic_server_labels") do
+    type 'String'
+    default ENV['new_relic_server_labels']
+    allowed_pattern "[\\x20-\\x7E]*"
+    description 'New Relic labels for server monitoring'
+    constraint_description 'can only contain ASCII characters'
+  end
+
   if _config.fetch(:create_swap_volume, false).to_s == 'true'
     parameters("#{_name}_swap_volume_size".to_sym) do
       type 'Number'

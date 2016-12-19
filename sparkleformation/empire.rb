@@ -1,5 +1,5 @@
 ENV['lb_name']            ||= "#{ENV['org']}-#{ENV['environment']}-empire-elb"
-ENV['notification_topic'] ||= "#{ENV['org']}-#{ENV['environment']}-deregister-ecs-instance"
+ENV['notification_topic'] ||= "#{ENV['org']}_#{ENV['environment']}_deregister_e_c_s_instance"
 ENV['enable_sumologic']   ||= 'true'
 
 SparkleFormation.new(:vpn, :provider => :aws).load(:base, :ansible_base, :ssh_key_pair, :empire_ami, :elb_security_policies).overrides do
@@ -122,14 +122,6 @@ EOF
     default ENV['new_relic_license_key']
     allowed_pattern "[\\x20-\\x7E]*"
     description 'New Relic license key for server monitoring'
-    constraint_description 'can only contain ASCII characters'
-  end
-
-  parameters(:new_relic_server_labels) do
-    type 'String'
-    default ENV['new_relic_server_labels']
-    allowed_pattern "[\\x20-\\x7E]*"
-    description 'New Relic labels for server monitoring'
     constraint_description 'can only contain ASCII characters'
   end
 
@@ -295,7 +287,7 @@ EOF
            :iam_role => 'ControllerIAMRole',
            :public_ips => 'false',
            :security_groups => _array(ref!(:controller_ec2_security_group)),
-           :ansible_seed => registry!(:controller_seed),
+           :ansible_seed => registry!(:controller_seed, 'controller'),
            :create_swap_volume => false,
            :create_ebs_volume => true
           )
@@ -385,7 +377,7 @@ EOF
            :iam_role => 'MinionIAMRole',
            :public_ips => 'false',
            :security_groups => _array(ref!(:minion_ec2_security_group)),
-           :ansible_seed => registry!(:minion_seed),
+           :ansible_seed => registry!(:minion_seed, 'minion'),
            :create_swap_volume => true,
            :create_ebs_volume => true
           )

@@ -1,4 +1,4 @@
-SfnRegistry.register(:minion_seed) do |_name, _config =  {}|
+SfnRegistry.register(:minion_seed) do |_name, _config = {}|
   {
     "EMPIRE_ENVIRONMENT"       => ENV['environment'],
     "EMPIRE_HOSTGROUP"         => 'minion',
@@ -10,7 +10,7 @@ SfnRegistry.register(:minion_seed) do |_name, _config =  {}|
     "DOCKER_REGISTRY"          => ref!(:docker_registry),
     "DOCKER_VERSION"           => ref!(:docker_version),
     "NEW_RELIC_LICENSE_KEY"    => ref!(:new_relic_license_key),
-    "NEW_RELIC_SERVER_LABELS"  => ref!(:new_relic_server_labels),
+    "NEW_RELIC_SERVER_LABELS"  => ref!("#{_name}_new_relic_server_labels".to_sym),
     "SUMOLOGIC_ACCESS_ID"      => ref!(:sumologic_access_id),
     "SUMOLOGIC_ACCESS_KEY"     => ref!(:sumologic_access_key),
     "ENABLE_SUMOLOGIC"         => ref!(:enable_sumologic)
