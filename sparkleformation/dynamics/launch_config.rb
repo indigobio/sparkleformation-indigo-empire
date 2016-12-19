@@ -25,37 +25,6 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
     description 'Associate public IP addresses to instances'
   end
 
-  parameters("#{_name}_ansible_inventory".to_sym) do
-    type 'String'
-    default _config.fetch(:ansible_inventory, '/etc/ansible/hosts')
-    allowed_pattern "[\\x20-\\x7E]*"
-    description 'Git repository containing ansible playbook'
-    constraint_description 'can only contain ASCII characters'
-  end
-
-  parameters("#{_name}_ansible_playbook_repo".to_sym) do
-    type 'String'
-    default _config[:ansible_playbook_repo]
-    allowed_pattern "[\\x20-\\x7E]*"
-    description 'Git repository containing ansible playbook'
-    constraint_description 'can only contain ASCII characters'
-  end
-
-  parameters("#{_name}_ansible_playbook_branch".to_sym) do
-    type 'String'
-    default _config.fetch(:ansible_playbook_branch, 'master')
-    allowed_pattern "[\\x20-\\x7E]*"
-    description 'Git repository branch'
-    constraint_description 'can only contain ASCII characters'
-  end
-
-  parameters("#{_name}_ansible_local_yaml_path".to_sym) do
-    type 'String'
-    default _config.fetch(:ansible_local_yaml_path, 'local.yml')
-    allowed_pattern "[\\x20-\\x7E]*"
-    description 'Path, in the playbook repository, to find the local.yml file'
-    constraint_description 'can only contain ASCII characters'
-  end
 
   parameters("#{_name}_root_volume_size".to_sym) do
     type 'Number'
@@ -150,10 +119,11 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
 
   dynamic!(:auto_scaling_launch_configuration, _name).registry!(:ansible_pull, _name,
            :ansible_seed => _config.fetch(:ansible_seed, {}),
-           :ansible_inventory => ref!("#{_name}_ansible_inventory".to_sym),
+           :ansible_inventory => ref!(:ansible_inventory),
            :ansible_version => ref!(:ansible_version),
-           :ansible_playbook_repo => ref!("#{_name}_ansible_playbook_repo".to_sym),
-           :ansible_local_yaml_path => ref!("#{_name}_ansible_local_yaml_path".to_sym),
+           :ansible_playbook_repo => ref!(:ansible_playbook_repo),
+           :ansible_playbook_branch => ref!(:ansible_playbook_branch),
+           :ansible_local_yaml_path => ref!(:ansible_local_yaml_path),
            :iam_role => ref!(_config[:iam_role])
           )
 
