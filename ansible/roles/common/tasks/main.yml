@@ -44,6 +44,10 @@
   tags: 
     - build_ami
 
+- apt: name=python-pip
+  tags:
+    - build_ami
+
 - apt: name=python-setuptools
   tags: 
     - build_ami

@@ -53,14 +53,6 @@
     state: started
     enabled: yes
 
-- name: Install the New Relic LVM thinpools monitoring plugin
-  template:
-    src: usr/sbin/newrelic_lv_thinpool.sh
-    dest: /usr/sbin/newrelic_lv_thinpool.sh
-    group: root
-    owner: root
-    mode: 0755
-
 - name: Setup cron job to run the New Relic LVM thinpools monitoring plugin
   cron:
     name: /usr/sbin/newrelic_lv_thinpool.sh

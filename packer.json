@@ -1,5 +1,8 @@
 {
   "variables": {
+    "changes": "{{ env `CHANGES` }}",
+    "gitinfo": "{{ env `GITINFO` }}",
+    "branch": "{{ env `BRANCH` }}",
     "aws_account_id": "{{env `AWS_CUSTOMER_ID` }}",
     "ami_users": "{{env `AWS_ALTERNATE_IDS` }}",
     "ami_regions": "{{env `AWS_ALTERNATE_REGIONS` }}"
