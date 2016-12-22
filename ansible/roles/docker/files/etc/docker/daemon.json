@@ -1,0 +1,13 @@
+{
+  "storage-driver": "devicemapper",
+  "storage-opts": [
+    "dm.thinpooldev=/dev/mapper/vg0-pool0",
+    "dm.use_deferred_deletion=true",
+    "dm.use_deferred_removal=true"
+  ],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "10"
+  }
+}
