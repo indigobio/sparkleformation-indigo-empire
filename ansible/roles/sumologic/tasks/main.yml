@@ -1,11 +1,12 @@
 - include_vars: sumologic.yml
 
+- template: src=etc/systemd/system/sumologic-collector.service.j2 dest=/etc/systemd/system/sumologic-collector.service mode=0755 owner=root group=root
+
 - file: name=/etc/sumo mode=0755 owner=root group=root state=directory
 
 - template: src=etc/sumo/sumologic.conf.j2 dest=/etc/sumo/sumologic.conf mode=0700 owner=root group=root
 
 - template: src=etc/sumo/sumo-sources.json.j2 dest=/etc/sumo/sumo-sources.json mode=0644 owner=root group=root
+  notify:
+    - start_sumologic
 
-- template: src=etc/systemd/system/sumologic-collector.service.j2 dest=/etc/systemd/system/sumologic-collector.service mode=0755 owner=root group=root
-
-- service: name=sumologic-collector state=started
