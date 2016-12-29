@@ -14,7 +14,7 @@
     chain: PREROUTING
     protocol: tcp
     destination: 169.254.170.2
-    destinaton_port: 80
+    destination_port: 80
     jump: DNAT
     to_destination: 127.0.0.1:51679
 
