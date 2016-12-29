@@ -2,26 +2,32 @@
 
 # Sysctl and iptables are somehow related to AWS's metadata service for
 # IAM roles for tasks.
-- sysctl: name=net.ipv4.conf.all.route_localnet value=1 state=present
+- name: set net.ipv4.conf.all.route_localnet = 1
+  sysctl:
+    name: net.ipv4.conf.all.route_localnet
+    value: 1
+    state: present
 
-- iptables:
-  table: nat
-  chain: PREROUTING
-  protocol: tcp
-  destination: 169.254.170.2
-  destinaton_port: 80
-  jump: DNAT
-  to_destination: 127.0.0.1:51679
+- name: add rule to iptables nat PREROUTING chain
+  iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: tcp
+    destination: 169.254.170.2
+    destinaton_port: 80
+    jump: DNAT
+    to_destination: 127.0.0.1:51679
 
-- iptables:
-  table: nat
-  chain: OUTPUT
-  protocol: tcp
-  match: tcp
-  destination: 169.254.170.2
-  destination_port: 80
-  jump: REDIRECT
-  to_ports: 51679
+- name: add rule to iptables nat OUTPUT chain
+  iptables:
+    table: nat
+    chain: OUTPUT
+    protocol: tcp
+    match: tcp
+    destination: 169.254.170.2
+    destination_port: 80
+    jump: REDIRECT
+    to_ports: 51679
 
 - file: name=/etc/ecs mode=0750 owner=root group=root state=directory
 
