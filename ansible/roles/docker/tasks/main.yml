@@ -125,14 +125,6 @@
 
 - copy: src=usr/local/bin/cba dest=/usr/local/bin/cba owner=root mode=0755
 
-- copy: src=usr/sbin/docker_maid dest=/usr/sbin/docker_maid owner=root group=root mode=0755
-  tags: 
-    - build_ami
-
-- cron: name=docker_maid cron_file=docker_maid user=root minute="15" hour="2,3,4,5,8,11,14,17,20,23" job="/usr/sbin/docker_maid"
-  tags: 
-    - build_ami
-
 - name: Adding ubuntu to docker group
   user: name=ubuntu groups=docker append=yes
   tags: 
