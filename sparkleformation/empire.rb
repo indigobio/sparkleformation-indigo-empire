@@ -56,7 +56,7 @@ EOF
 
   parameters(:empire_version) do
     type 'String'
-    default '0.10.0'
+    default '0.10.1'
     allowed_pattern "[\\x20-\\x7E]*"
     description 'Docker tag to specify the version of Empire to run'
     constraint_description 'can only contain ASCII characters'
