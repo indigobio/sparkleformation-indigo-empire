@@ -26,7 +26,6 @@
     - swap
     - docker
     - aws_ecs
-    - empire
     - newrelic
     - { role: sumologic, when: enable_sumologic == 'true' }
 - hosts: empire_ami
@@ -42,4 +41,3 @@
     - common
     - docker
     - aws_ecs
-    - empire

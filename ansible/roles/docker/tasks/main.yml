@@ -115,7 +115,7 @@
 
 - name: Install docker-engine
   apt:
-    name: "docker-engine={{ docker_version }}~{{ ansible_distribution_release }}"
+    name: "docker-engine={{ docker_version }}*"
   tags:
     - build_ami
 
