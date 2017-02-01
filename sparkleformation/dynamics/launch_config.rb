@@ -127,5 +127,5 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
            :iam_role => ref!(_config[:iam_role])
           )
 
-  dynamic!(:auto_scaling_launch_configuration, _name).depends_on "#{_name.capitalize}IAMInstanceProfile"
+  dynamic!(:auto_scaling_launch_configuration, _name).depends_on _config[:iam_instance_profile]
 end

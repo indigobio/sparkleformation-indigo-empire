@@ -1,0 +1,183 @@
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-aws-instance-types.git
+  revision: dbdb287de6ea829ae4f69e185fd0fc8b4204bc8b
+  specs:
+    sparkle-pack-aws-instance-types (0.0.1)
+
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-aws-my-iam-resources.git
+  revision: ed45084604a16ef09f5273a8d6a79707445a9137
+  specs:
+    sparkle-pack-aws-my-iam-resources (0.0.1)
+      sparkle_formation
+
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-aws-my-load-balancers
+  revision: b44f16827f157b9a9e9e37919ee0c382bee9e004
+  specs:
+    sparkle-pack-aws-my-load-balancers (0.0.1)
+      aws-sdk-core (~> 2)
+
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-aws-my-route53-zones.git
+  revision: 30f0329f40016f93dc18a4295063b091f6549791
+  specs:
+    sparkle-pack-aws-my-route53-zones (0.0.1)
+      aws-sdk-core (~> 2)
+
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-aws-my-s3-buckets.git
+  revision: c3f5761592f2373e0950a514964780740e02d708
+  specs:
+    sparkle-pack-aws-my-s3-buckets (0.0.1)
+      aws-sdk-core (~> 2)
+
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-aws-my-security-groups.git
+  revision: 0b37110cd25407b4de0311e5ce2ae90acfde31e7
+  specs:
+    sparkle-pack-aws-my-security-groups (0.0.1)
+      aws-sdk-core (~> 2)
+
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-aws-my-server-certificates.git
+  revision: 6428562df30c101143a669cc4f7ee2a23492752f
+  specs:
+    sparkle-pack-aws-my-server-certificates (0.0.1)
+      aws-sdk-core (~> 2)
+
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-aws-my-sns-topics.git
+  revision: b6ea70a89946a4948df938c9e79495aa9303cbd6
+  specs:
+    sparkle-pack-aws-my-sns-topics (0.0.1)
+      aws-sdk-core (~> 2)
+
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-aws-my-subnets.git
+  revision: 1fac129a8e870765bd706b801ed808d5a0a5c539
+  specs:
+    sparkle-pack-aws-my-subnets (0.0.1)
+      aws-sdk-core (~> 2)
+
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-cfn-init-ansible.git
+  revision: cb87f5bd6efd9caeeb6f9d4e0ae77b07eb13914e
+  specs:
+    sparkle-pack-cfn-init-ansible (0.0.1)
+      sparkle_formation
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.5.0)
+      public_suffix (~> 2.0, >= 2.0.2)
+    attribute_struct (0.3.4)
+      bogo (>= 0.1.31, < 0.3.0)
+    aws-sdk-core (2.7.3)
+      aws-sigv4 (~> 1.0)
+      jmespath (~> 1.0)
+    aws-sigv4 (1.0.0)
+    bogo (0.2.8)
+      hashie
+      multi_json
+    bogo-cli (0.2.12)
+      bogo (>= 0.1.6, < 0.6)
+      bogo-config (>= 0.1.15, < 0.5)
+      bogo-ui
+      slop (~> 3)
+    bogo-config (0.2.2)
+      attribute_struct
+      bogo (>= 0.1.4, < 1.0)
+      multi_json
+      multi_xml
+    bogo-ui (0.1.22)
+      bogo
+      command_line_reporter
+      paint
+    colored (1.2)
+    command_line_reporter (3.3.6)
+      colored (>= 1.2)
+    domain_name (0.5.20161129)
+      unf (>= 0.0.5, < 1.0.0)
+    graph (2.8.2)
+    hashdiff (0.2.3)
+    hashie (3.5.1)
+    http (1.0.4)
+      addressable (~> 2.3)
+      http-cookie (~> 1.0)
+      http-form_data (~> 1.0.1)
+      http_parser.rb (~> 0.6.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
+    http-form_data (1.0.1)
+    http_parser.rb (0.6.0)
+    jmespath (1.3.1)
+    miasma (0.3.2)
+      bogo (>= 0.2.2, < 1.0)
+      http (>= 0.8.12, < 1.1)
+      multi_json
+      multi_xml
+      xml-simple
+    miasma-aws (0.3.6)
+      miasma (>= 0.3.1, < 0.5)
+    miasma-azure (0.1.4)
+    miasma-google (0.1.0)
+      miasma (>= 0.2.12)
+      mime-types
+    miasma-open-stack (0.1.4)
+    miasma-rackspace (0.1.2)
+      miasma-open-stack
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    multi_json (1.12.1)
+    multi_xml (0.6.0)
+    net-ssh (4.0.1)
+    paint (2.0.0)
+    public_suffix (2.0.5)
+    sfn (3.0.20)
+      bogo-cli (>= 0.2.5, < 0.4)
+      bogo-ui (>= 0.1.20, < 0.4)
+      graph (~> 2.8.1)
+      hashdiff (~> 0.2.2)
+      jmespath
+      miasma (>= 0.3.0, < 0.4)
+      miasma-aws (>= 0.3.6, < 0.4)
+      miasma-azure (>= 0.1.0, < 0.3)
+      miasma-google (>= 0.1.0, < 0.3)
+      miasma-open-stack (>= 0.1.0, < 0.3)
+      miasma-rackspace (>= 0.1.0, < 0.3)
+      net-ssh
+      sparkle_formation (>= 3.0.3, < 4)
+    slop (3.6.0)
+    sparkle-pack-aws-availability-zones (0.1.2)
+      aws-sdk-core (~> 2.2)
+    sparkle_formation (3.0.10)
+      attribute_struct (>= 0.3.0, < 0.5)
+      bogo
+      multi_json
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.2)
+    xml-simple (1.1.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  sfn
+  sparkle-pack-aws-availability-zones
+  sparkle-pack-aws-instance-types!
+  sparkle-pack-aws-my-iam-resources!
+  sparkle-pack-aws-my-load-balancers!
+  sparkle-pack-aws-my-route53-zones!
+  sparkle-pack-aws-my-s3-buckets!
+  sparkle-pack-aws-my-security-groups!
+  sparkle-pack-aws-my-server-certificates!
+  sparkle-pack-aws-my-sns-topics!
+  sparkle-pack-aws-my-subnets!
+  sparkle-pack-cfn-init-ansible!
+
+BUNDLED WITH
+   1.12.5

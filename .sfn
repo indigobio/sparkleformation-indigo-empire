@@ -14,6 +14,7 @@ Configuration.new do
     'sparkle-pack-aws-my-sns-topics',
     'sparkle-pack-aws-my-subnets',
     'sparkle-pack-aws-my-route53-zones',
+    'sparkle-pack-aws-my-iam-resources',
     'sparkle-pack-cfn-init-ansible'
   ]
   #   Set style of stack nesting

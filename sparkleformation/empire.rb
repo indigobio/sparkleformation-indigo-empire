@@ -48,7 +48,7 @@ EOF
 
   parameters(:ecs_agent_version) do
     type 'String'
-    default 'v1.13.1'
+    default 'v1.14.0'
     allowed_pattern "[\\x20-\\x7E]*"
     description 'Docker tag to specify the version of Empire to run'
     constraint_description 'can only contain ASCII characters'
@@ -56,7 +56,7 @@ EOF
 
   parameters(:empire_version) do
     type 'String'
-    default '0.10.1'
+    default '0.11.0'
     allowed_pattern "[\\x20-\\x7E]*"
     description 'Docker tag to specify the version of Empire to run'
     constraint_description 'can only contain ASCII characters'
@@ -76,6 +76,13 @@ EOF
     allowed_pattern "[\\x20-\\x7E]*"
     description 'Master password for Empire RDS instance'
     constraint_description 'can only contain ASCII characters'
+  end
+
+  parameters(:empire_scheduler) do
+    type 'String'
+    default ENV.fetch('scheduler', '')
+    allowed_values ['', 'cloudformation']
+    description 'Scheduler to use with Empire (native API, cloudformation)'
   end
 
   parameters(:empire_token_secret) do
@@ -119,7 +126,7 @@ EOF
 
   parameters(:docker_version) do
     type 'String'
-    default '1.11.2-0'
+    default '1.12.6-0'
     description 'Version of docker to install'
     allowed_pattern "[0-9.-]+"
     constraint_description 'can only contain numbers, periods and dashes'
@@ -297,8 +304,63 @@ EOF
           )
 
   ######################################################################
+  # IAM resources                                                      #
+  ######################################################################
+
+  # All ECS cluster member EC2 instances
+  dynamic!(:iam_role, 'ECSInstance')
+
+  dynamic!(:iam_policy, 'ECSInstance',
+           :policy_statements => [ :ecs_instance_policy_statements ],
+           :iam_roles => [ 'ECSInstanceIAMRole']
+          )
+
+  dynamic!(:iam_instance_profile, 'ECSInstance',
+           :iam_roles => [ 'ECSInstanceIAMRole' ],
+           :iam_policy => 'ECSInstanceIAMPolicy'
+          )
+
+  # Empire controller service.
+  dynamic!(:iam_role, 'ControllerService', :services => [ 'ecs.amazonaws.com', 'events.amazonaws.com', 'lambda.amazonaws.com' ])
+  dynamic!(:iam_policy, 'ControllerService',
+           :policy_statements => {
+             :empire_service_role_policy_statements => {
+               :cluster => 'ControllerEcsCluster'
+             }
+           },
+           :iam_roles => [ 'ControllerServiceIAMRole' ]
+  )
+
+  # Empire controller task definition
+  dynamic!(:iam_role, 'ControllerTaskDefinition', :services => [ 'ecs-tasks.amazonaws.com' ])
+  dynamic!(:iam_policy, 'ControllerTaskDefinition',
+           :policy_statements => {
+             :empire_task_definition_policy_statements => {
+               :custom_resources_bucket => 'EmpireCustomResourcesS3Bucket',
+               :custom_resources_queue => 'EmpireCustomResourcesSQSQueue',
+               :custom_resources_topic => 'EmpireCustomResourcesSNSTopic',
+               :events_topic => 'EmpireEventsSNSTopic',
+               :internal_domain => registry!(:my_hosted_zone, ENV['private_domain'])
+             }
+           },
+           :iam_roles => [ 'ControllerTaskDefinitionIAMRole']
+  )
+
+  ######################################################################
   # ACTUAL STUFF: Controllers and their accoutrements                  #
   ######################################################################
+
+  dynamic!(:s3_bucket, 'empireCustomResources')
+
+  dynamic!(:sns_topic, 'empireCustomResources', :endpoint => 'EmpireCustomResourcesSQSQueue', :protocol => 'sqs')
+  dynamic!(:sns_topic, 'empireEvents')
+
+  dynamic!(:sqs_queue, 'empireCustomResources')
+  dynamic!(:sqs_queue_policy, 'empireCustomResources',
+           :queue => 'EmpireCustomResourcesSQSQueue',
+           :topic => 'EmpireCustomResourcesSNSTopic'
+          )
+
   dynamic!(:elb, 'controller',
            :listeners => [
              { :instance_port => '8080', :instance_protocol => 'http', :load_balancer_port => '443', :protocol => 'https', :ssl_certificate_id => registry!(:my_acm_server_certificate), :policy_names => [ref!(:elb_security_policy)] }
@@ -311,12 +373,9 @@ EOF
            :ssl_certificate_ids => registry!(:my_acm_server_certificate)
           )
 
-  dynamic!(:iam_instance_profile, 'controller', :policy_statements => [ :controller_policy_statements ])
-
-
   dynamic!(:launch_config, 'controller',
-           :iam_instance_profile => 'ControllerIAMInstanceProfile',
-           :iam_role => 'ControllerIAMRole',
+           :iam_instance_profile => 'ECSInstanceIAMInstanceProfile',
+           :iam_role => 'ECSInstanceIAMRole',
            :public_ips => 'false',
            :security_groups => _array(ref!(:controller_ec2_security_group)),
            :ansible_seed => registry!(:controller_seed, 'controller'),
@@ -342,8 +401,8 @@ EOF
                :container_port => '8080',
                :load_balancer => 'ControllerElasticLoadBalancingLoadBalancer' }
            ],
-           :service_role => 'ControllerIAMRole',
-           :service_policy => 'ControllerIAMPolicy',
+           :service_role => 'ControllerServiceIAMRole',
+           :service_policy => 'ControllerServiceIAMPolicy',
            :task_definition => 'ControllerEcsTaskDefinition',
            :auto_scaling_group => 'ControllerAutoScalingAutoScalingGroup'
           )
@@ -353,6 +412,7 @@ EOF
   # See http://empire.readthedocs.org/en/latest/production_best_practices/#securing-the-api
   dynamic!(:task_definition,
            'controller',
+           :task_role => 'ControllerTaskDefinitionIAMRole',
            :container_definitions => [
              {
                :name => 'empire_controller',
@@ -362,31 +422,41 @@ EOF
                :port_mappings => [ { :container_port => '8080', :host_port => '8080' } ],
                :mount_points => [
                  { :source_volume => 'dockerSocket', :container_path => '/var/run/docker.sock', :read_only => false},
-                 { :source_volume => 'dockerCfg', :container_path => '/root/.dockercfg', :read_only => false}
+                 { :source_volume => 'dockerCfg', :container_path => '/root/.dockercfg', :read_only => true}
                ],
                :essential => true,
                :environment => [
                  { :name => 'AWS_REGION', :value => region! },
+                 { :name => 'EMPIRE_CUSTOM_RESOURCES_TOPIC', :value => ref!(:empire_custom_resources_s_n_s_topic) },
+                 { :name => 'EMPIRE_CUSTOM_RESOURCES_QUEUE', :value => ref!(:empire_custom_resources_s_q_s_queue) },
                  { :name => 'EMPIRE_DATABASE_URL', :value => join!('postgres://', ref!(:empire_database_user), ':', ref!(:empire_database_password), '@empire-rds.', ENV['private_domain'], '/empire') },
-                 { :name => 'EMPIRE_GITHUB_CLIENT_ID', :value => ref!(:github_client_id) },
-                 { :name => 'EMPIRE_GITHUB_CLIENT_SECRET', :value => ref!(:github_client_secret) },
-                 { :name => 'EMPIRE_GITHUB_ORGANIZATION', :value => ref!(:github_organization) },
-                 { :name => 'EMPIRE_TOKEN_SECRET', :value => ref!(:empire_token_secret) },
-                 { :name => 'EMPIRE_PORT', :value => '8080' },
+                 { :name => 'EMPIRE_EC2_SUBNETS_PRIVATE', :value => join!(registry!(:my_private_subnet_ids), {:options => { :delimiter => ','}}) },
+                 { :name => 'EMPIRE_EC2_SUBNETS_PUBLIC', :value => join!(registry!(:my_public_subnet_ids), {:options => { :delimiter => ','}}) },
                  { :name => 'EMPIRE_ECS_CLUSTER', :value => ref!(:minion_ecs_cluster) },
+                 { :name => 'EMPIRE_ECS_LOG_DRIVER', :value => 'json-file' },
+                 { :name => 'EMPIRE_ECS_SERVICE_ROLE', :value => ref!(:controller_service_i_a_m_role) },
                  { :name => 'EMPIRE_ELB_VPC_ID', :value => registry!(:my_vpc) },
                  { :name => 'EMPIRE_ELB_SG_PRIVATE', :value => attr!(:minion_ec2_security_group, 'GroupId') },
                  { :name => 'EMPIRE_ELB_SG_PUBLIC', :value => attr!(:empire_public_ec2_security_group, 'GroupId') },
+                 { :name => 'EMPIRE_ENVIRONMENT', :value => ENV['environment'] },
+                 { :name => 'EMPIRE_EVENTS_BACKEND', :value => 'sns' },
+                 { :name => 'EMPIRE_GITHUB_CLIENT_ID', :value => ref!(:github_client_id) },
+                 { :name => 'EMPIRE_GITHUB_CLIENT_SECRET', :value => ref!(:github_client_secret) },
+                 { :name => 'EMPIRE_GITHUB_ORGANIZATION', :value => ref!(:github_organization) },
+                 { :name => 'EMPIRE_PORT', :value => '8080' },
                  { :name => 'EMPIRE_ROUTE53_INTERNAL_ZONE_ID', :value => registry!(:my_hosted_zone, ENV['private_domain']) },
-                 { :name => 'EMPIRE_EC2_SUBNETS_PRIVATE', :value => join!(registry!(:my_private_subnet_ids), {:options => { :delimiter => ','}}) },
-                 { :name => 'EMPIRE_EC2_SUBNETS_PUBLIC', :value => join!(registry!(:my_public_subnet_ids), {:options => { :delimiter => ','}}) },
-                 { :name => 'EMPIRE_ECS_SERVICE_ROLE', :value => ref!(:controller_i_a_m_role) }
+                 { :name => 'EMPIRE_RUN_LOGS_BACKEND', :value => 'stdout' },
+                 { :name => 'EMPIRE_S3_TEMPLATE_BUCKET', :value => ref!(:empire_custom_resources_s3_bucket) },
+                 { :name => 'EMPIRE_SNS_TOPIC', :value => ref!(:empire_events_s_n_s_topic) },
+                 { :name => 'EMPIRE_SCHEDULER', :value => ref!(:empire_scheduler) },
+                 { :name => 'EMPIRE_TOKEN_SECRET', :value => ref!(:empire_token_secret) },
+                 { :name => 'EMPIRE_X_SHOW_ATTACHED', :value =>  'false' }
                ]
              }
            ],
            :volumes => [
              { :name => 'dockerSocket', :source_path => '/var/run/docker.sock' },
-             { :name => 'dockerCfg', :source_path => '/etc/empire/dockercfg' }
+             { :name => 'dockerCfg', :source_path => '/root/.docker/config.json' }
            ]
          )
 
@@ -402,11 +472,9 @@ EOF
   # Empire Minions                                                     #
   ######################################################################
 
-  dynamic!(:iam_instance_profile, 'minion', :policy_statements => [ :minion_policy_statements ])
-
   dynamic!(:launch_config, 'minion',
-           :iam_instance_profile => 'MinionIAMInstanceProfile',
-           :iam_role => 'MinionIAMRole',
+           :iam_instance_profile => 'ECSInstanceIAMInstanceProfile',
+           :iam_role => 'ECSInstanceIAMRole',
            :public_ips => 'false',
            :security_groups => _array(ref!(:minion_ec2_security_group)),
            :ansible_seed => registry!(:minion_seed, 'minion'),
