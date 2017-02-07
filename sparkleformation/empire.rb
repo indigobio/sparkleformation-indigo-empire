@@ -252,16 +252,6 @@ EOF
            :target_sg => registry!(:my_security_group_id, 'private_sg')
           )
 
-  # TODO: this seems like overkill.  Maybe I can just put the Chronicle
-  # RDS instance into the private security group.
-  dynamic!(:security_group_ingress, 'empire-to-chronicle-postgres',
-           :source_sg => attr!(:minion_ec2_security_group, 'GroupId'),
-           :ip_protocol => 'tcp',
-           :from_port => '5432',
-           :to_port => '5432',
-           :target_sg => registry!(:my_security_group_id, 'chronicle_sg')
-          )
-
   dynamic!(:security_group_ingress, 'empire-to-nat-all',
            :source_sg => attr!(:minion_ec2_security_group, 'GroupId'),
            :ip_protocol => '-1',
