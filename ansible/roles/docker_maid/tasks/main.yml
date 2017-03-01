@@ -1,0 +1,3 @@
+- copy: src=usr/sbin/docker_maid dest=/usr/sbin/docker_maid owner=root group=root mode=0755
+
+- cron: name=docker_maid cron_file=docker_maid user=root minute="15" job="/usr/sbin/docker_maid"

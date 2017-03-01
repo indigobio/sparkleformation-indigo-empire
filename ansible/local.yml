@@ -25,6 +25,7 @@
     - common
     - swap
     - docker
+    - docker_maid
     - aws_ecs
     - newrelic
     - { role: sumologic, when: enable_sumologic == 'true' }
