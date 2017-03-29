@@ -13,9 +13,9 @@ GIT
 
 GIT
   remote: https://github.com/gswallow/sparkle-pack-aws-my-load-balancers
-  revision: b44f16827f157b9a9e9e37919ee0c382bee9e004
+  revision: aa784982e9cdbfeaabc0a74de165475b36507557
   specs:
-    sparkle-pack-aws-my-load-balancers (0.0.1)
+    sparkle-pack-aws-my-load-balancers (0.0.2)
       aws-sdk-core (~> 2)
 
 GIT
@@ -74,7 +74,7 @@ GEM
       public_suffix (~> 2.0, >= 2.0.2)
     attribute_struct (0.3.4)
       bogo (>= 0.1.31, < 0.3.0)
-    aws-sdk-core (2.8.5)
+    aws-sdk-core (2.8.14)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
     aws-sigv4 (1.0.0)
@@ -155,7 +155,7 @@ GEM
     slop (3.6.0)
     sparkle-pack-aws-availability-zones (0.1.2)
       aws-sdk-core (~> 2.2)
-    sparkle_formation (3.0.16)
+    sparkle_formation (3.0.20)
       attribute_struct (>= 0.3.0, < 0.5)
       bogo
       multi_json
