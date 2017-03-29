@@ -62,9 +62,9 @@ GIT
 
 GIT
   remote: https://github.com/gswallow/sparkle-pack-cfn-init-ansible.git
-  revision: cb87f5bd6efd9caeeb6f9d4e0ae77b07eb13914e
+  revision: ca6c5c1330eac8a4276618718f1d2a62e17991f5
   specs:
-    sparkle-pack-cfn-init-ansible (0.0.1)
+    sparkle-pack-cfn-init-ansible (0.0.2)
       sparkle_formation
 
 GEM
