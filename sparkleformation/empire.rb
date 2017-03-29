@@ -1,8 +1,9 @@
 ENV['lb_name']            ||= "#{ENV['org']}-#{ENV['environment']}-empire-elb"
 ENV['notification_topic'] ||= "#{ENV['org']}_#{ENV['environment']}_deregister_e_c_s_instance"
 ENV['enable_sumologic']   ||= 'true'
+ENV['enable_datadog']     ||= 'true'
 
-SparkleFormation.new(:vpn, :provider => :aws).load(:base, :ansible_base, :ssh_key_pair, :empire_ami, :elb_security_policies).overrides do
+SparkleFormation.new(:empire, :provider => :aws).load(:base, :ansible_base, :ssh_key_pair, :empire_ami, :elb_security_policies).overrides do
   description <<"EOF"
 Empire ECS cluster members, configured by Ansible. Empire controller ELB. Controller security
 group. Empire minion security group. Route53 record: empire.#{ENV['public_domain']}.
@@ -156,14 +157,6 @@ EOF
     constraint_description 'can only contain ASCII characters'
   end
 
-  parameters(:new_relic_license_key) do
-    type 'String'
-    default ENV['new_relic_license_key']
-    allowed_pattern "[\\x20-\\x7E]*"
-    description 'New Relic license key for server monitoring'
-    constraint_description 'can only contain ASCII characters'
-  end
-
   parameters(:enable_sumologic) do
     type 'String'
     allowed_values %w(true false)
@@ -171,19 +164,18 @@ EOF
     description 'Deploy the sumologic collector container to all instances'
   end
 
-  parameters(:sumologic_access_id) do
+  parameters(:enable_datadog) do
     type 'String'
-    default ENV['sumologic_access_id']
-    allowed_pattern "[\\x20-\\x7E]*"
-    description 'SumoLogic access ID for log collection'
-    constraint_description 'can only contain ASCII characters'
+    allowed_values %w(true false)
+    default ENV['enable_datadog']
+    description 'Deploy the datadog agent container to all instances'
   end
 
-  parameters(:sumologic_access_key) do
+  parameters(:dd_agent_version) do
     type 'String'
-    default ENV['sumologic_access_key']
+    default 'latest'
     allowed_pattern "[\\x20-\\x7E]*"
-    description 'SumoLogic access key for log collection'
+    description 'Datadog container version to start'
     constraint_description 'can only contain ASCII characters'
   end
 

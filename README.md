@@ -22,6 +22,7 @@ Contains a sparkleformation template and an ansible playbook that, together, cre
 | ControllerRecord | empire.`ENV['public_domain']` | No need to change |
 | ControllerRootVolumeSize | 12 | The root (/) volume size on the controller | 
 | ControllerTtl | 60 | The TTL of the empire.`ENV['public_domain']` DNS record |
+| DdAgentVersion | latest | The version of the datadog monitoring container to deploy |
 | DockerEmail | none | The e-mail of our Docker registry deployment user's account |
 | DockerPass | none | The password of our Docer registry deployment user's account |
 | ElbSecurityPolicy | latest | No reason to change | 
@@ -29,6 +30,7 @@ Contains a sparkleformation template and an ansible playbook that, together, cre
 | EmpireDatabaseUser | none | The name of the Empire RDS instance's non-privileged user account |
 | EmpireTokenSecret | random | ?? |
 | EmpireVersion | 0.10.0 | The version of the remind101/empire docker image to run |
+| EnableDatadog | true | Enables Datadog |
 | EnableSumologic | true | Enables sumologic |
 | GithubClientId | none | The github client that has access to Empire's API |
 | GithubClientSecret | none | Secret for the github client that has access to Empire's API |
@@ -48,11 +50,8 @@ Contains a sparkleformation template and an ansible playbook that, together, cre
 | MinionRecord | empire.`ENV['public_domain']` | No need to change |
 | MinionRootVolumeSize | 12 | The root (/) volume size on the minion | 
 | MinionTtl | 60 | The TTL of the empire.`ENV['public_domain']` DNS record |
-| NewRelicLicenseKey | ENV['new_relic_license_key'] | The New Relic API license key |
 | NewRelicServerLabels | none | A comma-delimited set of colon-separated Key/Value pairs |
 | SshKeyPair | indigo-bootstrap | The SSH key to use for each instance's 'ubuntu' account |
-| SumologicAccessId | `ENV['sumologic_access_id']` | SumoLogic credentials | 
-| SumologicAccessKey | `ENV['sumologic_access_key']` | SumoLogic credentials | 
 | SumologicCollectorName | none | The instance's fully qualified hostname if left blank |
 | Vpc | automatically determined | cannot change |
 
@@ -62,3 +61,5 @@ Loose notes.
 
 /var/lib/cfn-init/data/metadata.json = whatever comes over the wire from cfn-init.
 /var/lib/cloud/instance/user-data = minimal, these days.  mostly kicks off commands in /var/lib/cfn-init/data/metadata.json
+
+TODO: add environment variables.
