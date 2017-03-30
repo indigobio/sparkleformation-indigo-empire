@@ -334,7 +334,7 @@ EOF
 
   dynamic!(:s3_bucket, 'empireCustomResources')
 
-  dynamic!(:sns_topic, 'empireCustomResources', :endpoint => 'EmpireCustomResourcesSQSQueue', :protocol => 'sqs')
+  dynamic!(:sns_topic, 'empireCustomResources', :subscriber => 'EmpireCustomResourcesSQSQueue', :protocol => 'sqs')
   dynamic!(:sns_topic, 'empireEvents')
 
   dynamic!(:sqs_queue, 'empireCustomResources')
