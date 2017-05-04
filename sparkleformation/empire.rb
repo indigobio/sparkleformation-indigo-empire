@@ -49,7 +49,7 @@ EOF
 
   parameters(:ecs_agent_version) do
     type 'String'
-    default 'v1.14.0'
+    default 'v1.14.1'
     allowed_pattern "[\\x20-\\x7E]*"
     description 'Docker tag to specify the version of Empire to run'
     constraint_description 'can only contain ASCII characters'
@@ -57,7 +57,7 @@ EOF
 
   parameters(:empire_version) do
     type 'String'
-    default '0.11.0'
+    default '0.12.0'
     allowed_pattern "[\\x20-\\x7E]*"
     description 'Docker tag to specify the version of Empire to run'
     constraint_description 'can only contain ASCII characters'
@@ -127,7 +127,7 @@ EOF
 
   parameters(:docker_version) do
     type 'String'
-    default '1.12.6-0'
+    default '17.03.1~ce-0~ubuntu-xenial'
     description 'Version of docker to install'
     allowed_pattern "[0-9.-]+"
     constraint_description 'can only contain numbers, periods and dashes'

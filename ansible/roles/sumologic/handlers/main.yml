@@ -1,2 +1,0 @@
-- name: start_sumologic
-  service: name=sumologic-collector state=started

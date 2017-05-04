@@ -18,6 +18,7 @@ SfnRegistry.register(:minion_seed) do |_name, _config = {}|
     "ENABLE_SUMOLOGIC"         => ref!(:enable_sumologic),
     "DD_AGENT_VERSION"         => ref!(:dd_agent_version),
     "DD_API_KEY"               => ENV['dd_api_key'],
-    "ENABLE_DATADOG"           => ref!(:enable_datadog)
+    "ENABLE_DATADOG"           => ref!(:enable_datadog),
+    "LOAD_BALANCER_TYPE"       => 'alb'
   }
 end

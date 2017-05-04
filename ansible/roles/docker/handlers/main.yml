@@ -1,5 +1,0 @@
-- name: restart_docker
-  service: name=docker state=restarted
-
-- name: start transparent huge pages target
-  command: 'systemctl start disable_transparent_huge_pages.service'
