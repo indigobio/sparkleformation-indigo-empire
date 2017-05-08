@@ -129,8 +129,8 @@ EOF
     type 'String'
     default '17.03.1~ce-0~ubuntu-xenial'
     description 'Version of docker to install'
-    allowed_pattern "[0-9.-]+"
-    constraint_description 'can only contain numbers, periods and dashes'
+    allowed_pattern "[\\x20-\\x7E]*"
+    constraint_description 'can only contain ASCII characters'
   end
 
   parameters(:github_client_id) do
