@@ -12,3 +12,4 @@ gem 'sparkle-pack-aws-my-subnets',             :git => 'https://github.com/gswal
 gem 'sparkle-pack-aws-my-route53-zones',       :git => 'https://github.com/gswallow/sparkle-pack-aws-my-route53-zones.git'
 gem 'sparkle-pack-aws-my-iam-resources',       :git => 'https://github.com/gswallow/sparkle-pack-aws-my-iam-resources.git'
 gem 'sparkle-pack-cfn-init-ansible',           :git => 'https://github.com/gswallow/sparkle-pack-cfn-init-ansible.git'
+gem 'sparkle-pack-git-rev-outputs',            :git => 'https://github.com/gswallow/sparkle-pack-git-rev-outputs.git'

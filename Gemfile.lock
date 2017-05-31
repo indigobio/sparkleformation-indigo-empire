@@ -67,6 +67,12 @@ GIT
     sparkle-pack-cfn-init-ansible (0.0.2)
       sparkle_formation
 
+GIT
+  remote: https://github.com/gswallow/sparkle-pack-git-rev-outputs.git
+  revision: 146e854160fbd15c4ab6e851576756f0c313676a
+  specs:
+    sparkle-pack-git-rev-outputs (0.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -180,6 +186,7 @@ DEPENDENCIES
   sparkle-pack-aws-my-sns-topics!
   sparkle-pack-aws-my-subnets!
   sparkle-pack-cfn-init-ansible!
+  sparkle-pack-git-rev-outputs!
 
 BUNDLED WITH
    1.12.5

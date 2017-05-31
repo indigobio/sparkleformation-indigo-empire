@@ -15,7 +15,8 @@ Configuration.new do
     'sparkle-pack-aws-my-subnets',
     'sparkle-pack-aws-my-route53-zones',
     'sparkle-pack-aws-my-iam-resources',
-    'sparkle-pack-cfn-init-ansible'
+    'sparkle-pack-cfn-init-ansible',
+    'sparkle-pack-git-rev-outputs'
   ]
   #   Set style of stack nesting
   apply_nesting 'deep'

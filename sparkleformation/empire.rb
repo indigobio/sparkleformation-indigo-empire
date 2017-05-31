@@ -3,7 +3,7 @@ ENV['notification_topic'] ||= "#{ENV['org']}_#{ENV['environment']}_deregister_e_
 ENV['enable_sumologic']   ||= 'true'
 ENV['enable_datadog']     ||= 'true'
 
-SparkleFormation.new(:empire, :provider => :aws).load(:base, :ansible_base, :ssh_key_pair, :empire_ami, :elb_security_policies).overrides do
+SparkleFormation.new(:empire, :provider => :aws).load(:base, :ansible_base, :ssh_key_pair, :empire_ami, :elb_security_policies, :git_rev_outputs).overrides do
   description <<"EOF"
 Empire ECS cluster members, configured by Ansible. Empire controller ELB. Controller security
 group. Empire minion security group. Route53 record: empire.#{ENV['public_domain']}.
