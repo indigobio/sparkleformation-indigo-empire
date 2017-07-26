@@ -3,7 +3,7 @@ SparkleFormation.dynamic(:launch_config) do |_name, _config = {}|
   _config[:ami_map]              ||= :region_to_ami
   _config[:iam_instance_profile] ||= "#{_name}_i_a_m_instance_profile".to_sym
   _config[:iam_role]             ||= "#{_name}_i_a_m_role".to_sym
-  _config[:ansible_version]      ||= '2.3.0.0-1ppa'
+  _config[:ansible_version]      ||= '2.3.1.0-1ppa'
 
   parameters("#{_name}_instance_type".to_sym) do
     type 'String'
