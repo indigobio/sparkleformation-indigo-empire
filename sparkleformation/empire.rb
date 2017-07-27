@@ -179,13 +179,6 @@ EOF
     constraint_description 'can only contain ASCII characters'
   end
 
-  parameters(:load_balancer_type) do
-    type 'String'
-    default 'alb'
-    allowed_values %w(elb alb)
-    description 'Type of load balancer that Empire will create for each web service'
-  end
-
   ######################################################################
   # Security groups and rules                                          #
   ######################################################################
@@ -424,8 +417,7 @@ EOF
                  { :name => 'EMPIRE_SCHEDULER', :value => ref!(:empire_scheduler) },
                  { :name => 'EMPIRE_SERVER_SESSION_EXPIRATION', :value => '24h' },
                  { :name => 'EMPIRE_TOKEN_SECRET', :value => ref!(:empire_token_secret) },
-                 { :name => 'EMPIRE_X_SHOW_ATTACHED', :value => 'false' },
-                 { :name => 'EMPIRE_X_LOAD_BALANCER_TYPE', :value => ref!(:load_balancer_type) }
+                 { :name => 'EMPIRE_X_SHOW_ATTACHED', :value => 'false' }
                ]
              }
            ],
