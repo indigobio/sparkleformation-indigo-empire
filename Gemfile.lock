@@ -34,7 +34,7 @@ GIT
 
 GIT
   remote: https://github.com/gswallow/sparkle-pack-aws-my-security-groups.git
-  revision: 0b37110cd25407b4de0311e5ce2ae90acfde31e7
+  revision: d875688cb889d8b81476e265cd4cf5a7f330ccc8
   specs:
     sparkle-pack-aws-my-security-groups (0.0.1)
       aws-sdk-core (~> 2)
@@ -55,16 +55,16 @@ GIT
 
 GIT
   remote: https://github.com/gswallow/sparkle-pack-aws-my-subnets.git
-  revision: 1fac129a8e870765bd706b801ed808d5a0a5c539
+  revision: 88497117b22590c3e495d043a17c58cd621b3033
   specs:
     sparkle-pack-aws-my-subnets (0.0.1)
       aws-sdk-core (~> 2)
 
 GIT
   remote: https://github.com/gswallow/sparkle-pack-cfn-init-ansible.git
-  revision: ca6c5c1330eac8a4276618718f1d2a62e17991f5
+  revision: efab83a0f69972c74c0099b75dcb06577ba1e51f
   specs:
-    sparkle-pack-cfn-init-ansible (0.0.2)
+    sparkle-pack-cfn-init-ansible (0.0.3)
       sparkle_formation
 
 GIT
@@ -76,15 +76,15 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.5.1)
-      public_suffix (~> 2.0, >= 2.0.2)
-    attribute_struct (0.4.0)
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
+    attribute_struct (0.4.2)
       bogo (>= 0.1.31, < 0.3.0)
-    aws-sdk-core (2.9.15)
+    aws-sdk-core (2.10.58)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sigv4 (1.0.0)
-    bogo (0.2.8)
+    aws-sigv4 (1.0.2)
+    bogo (0.2.10)
       hashie
       multi_json
     bogo-cli (0.2.12)
@@ -102,13 +102,13 @@ GEM
       command_line_reporter
       paint
     colored (1.2)
-    command_line_reporter (3.3.6)
+    command_line_reporter (4.0.0)
       colored (>= 1.2)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     graph (2.8.2)
     hashdiff (0.2.3)
-    hashie (3.5.5)
+    hashie (3.5.6)
     http (1.0.4)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -116,7 +116,7 @@ GEM
       http_parser.rb (~> 0.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
-    http-form_data (1.0.2)
+    http-form_data (1.0.3)
     http_parser.rb (0.6.0)
     jmespath (1.3.1)
     miasma (0.3.2)
@@ -125,7 +125,7 @@ GEM
       multi_json
       multi_xml
       xml-simple
-    miasma-aws (0.3.8)
+    miasma-aws (0.3.10)
       miasma (>= 0.3.1, < 0.5)
     miasma-azure (0.1.4)
     miasma-google (0.1.0)
@@ -138,12 +138,12 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    multi_json (1.12.1)
+    multi_json (1.12.2)
     multi_xml (0.6.0)
-    net-ssh (4.1.0)
+    net-ssh (4.2.0)
     paint (2.0.0)
-    public_suffix (2.0.5)
-    sfn (3.0.22)
+    public_suffix (3.0.0)
+    sfn (3.0.28)
       bogo-cli (>= 0.2.5, < 0.4)
       bogo-ui (>= 0.1.22, < 0.4)
       graph (~> 2.8.1)
@@ -161,8 +161,8 @@ GEM
     slop (3.6.0)
     sparkle-pack-aws-availability-zones (0.1.2)
       aws-sdk-core (~> 2.2)
-    sparkle_formation (3.0.20)
-      attribute_struct (>= 0.3.0, < 0.5)
+    sparkle_formation (3.0.26)
+      attribute_struct (>= 0.3.5, < 0.5)
       bogo
       multi_json
     unf (0.1.4)
