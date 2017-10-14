@@ -29,10 +29,13 @@ del_stack () {
 }
 
 empire_fqdn=$(echo $EMPIRE_API_URL |cut -d/ -f3)
+set +e
 host $empire_fqdn > /dev/null 2>&1
+ret=$?
+set -e
 
 # Tear down Empire apps
-if [ $? -eq 0 ]; then
+if [ $ret -eq 0 ]; then
   emp apps > /dev/null 2>&1 && : || emp login
   for i in $(emp apps | awk '{print $1}') ; do
     run_if_yes "echo $i | emp destroy $i"
