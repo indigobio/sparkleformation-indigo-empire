@@ -28,11 +28,16 @@ del_stack () {
   fi
 }
 
+empire_fqdn=$(echo $EMPIRE_API_URL |cut -d/ -f3)
+host $empire_fqdn > /dev/null 2>&1
+
 # Tear down Empire apps
-emp apps > /dev/null 2>&1 && : || emp login
-for i in $(emp apps | awk '{print $1}') ; do
-  run_if_yes "echo $i | emp destroy $i"
-done
+if [ $? -eq 0 ]; then
+  emp apps > /dev/null 2>&1 && : || emp login
+  for i in $(emp apps | awk '{print $1}') ; do
+    run_if_yes "echo $i | emp destroy $i"
+  done
+fi
 
 # Wait for apps to delete
 echo -n "Waiting for emp apps to delete"
@@ -54,4 +59,6 @@ stack=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPD
   --query 'StackSummaries[].StackId' --output table | grep ${environment}-empire-${AWS_DEFAULT_REGION} \
   | awk '{print $2}')
 
-del_stack $stack
+if [ -n "$stack" ]; then
+  del_stack $stack
+fi
